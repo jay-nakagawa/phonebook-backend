@@ -111,7 +111,7 @@ app.post("/api/persons", (request, response) => {
 
   persons = persons.concat(person);
 
-  // console.log(person);
+  // console.log(person) ;
   response.json(person);
 });
 
