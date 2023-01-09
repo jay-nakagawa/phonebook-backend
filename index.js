@@ -7,15 +7,15 @@ app.use(express.json());
 // // app.use(morgan('tiny'))
 
 // morgan.token('body', function getBody (req) {
-//  //an object can not be logged to it must be turned into a string 
-//   return JSON.stringify(req.body)   
+//  //an object can not be logged to it must be turned into a string
+//   return JSON.stringify(req.body)
 // })
 
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-const cors = require('cors')
+const cors = require("cors");
 
-app.use(cors())
+app.use(cors());
 
 let persons = [
   {
@@ -42,7 +42,7 @@ let persons = [
     id: 5,
     name: "BigBird",
     number: "111111111",
-  }
+  },
 ];
 
 app.get("/", (request, response) => {
@@ -91,18 +91,16 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({
       error: "info missing",
     });
-  } 
+  }
 
   //check persons array to see if there is any elements already using the name in the request body
-  const duplicateChecker = persons.find(person=> person.name===body.name ) 
+  const duplicateChecker = persons.find((person) => person.name === body.name);
   //if there is a duplicate name then 404
-  if (duplicateChecker){
+  if (duplicateChecker) {
     return response.status(400).json({
       error: "duplicate name",
     });
   }
-
-
 
   const person = {
     name: body.name,
@@ -116,7 +114,7 @@ app.post("/api/persons", (request, response) => {
   response.json(person);
 });
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
