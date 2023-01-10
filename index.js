@@ -16,35 +16,37 @@ app.use(express.json());
 const cors = require("cors");
 
 app.use(cors());
-app.use(express.static('build'))
+app.use(express.static("build"));
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-  {
-    id: 5,
-    name: "BigBird",
-    number: "111111111",
-  },
-];
+//////mongoose
+const mongoose = require("mongoose");
+
+if (process.argv.length < 3) {
+  console.log(
+    "Please provide the password as an argument: node mongo.js <password>"
+  );
+  process.exit(1);
+}
+
+const password = process.argv[2];
+console.log(password);
+const personName = process.argv[3];
+const personNumber = process.argv[4];
+
+const url = `mongodb+srv://jay:${password}@cluster0.rne2yt3.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
+
+mongoose.connect(url).then(() => {
+  console.log("connected");
+});
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+});
+
+const Person = mongoose.model("Person", personSchema);
+
+//////////mongoose end
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
@@ -56,7 +58,9 @@ app.get("/info", (request, response) => {
   );
 });
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 app.get("/api/persons/:id", (request, response) => {
   const id = +request.params.id;
