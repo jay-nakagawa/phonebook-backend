@@ -6,16 +6,18 @@ if (process.argv.length < 3) {
 }
 
 const password = process.argv[2]
+console.log(password)
 const personName = process.argv[3]
 const personNumber = process.argv[4]
 
 const url = `mongodb+srv://jay:${password}@cluster0.rne2yt3.mongodb.net/phonebookApp?retryWrites=true&w=majority`
 
-mongoose
-  .connect(url)
+mongoose.connect(url)
   .then(() => {
     console.log('connected')
   })
+
+
 
 const personSchema = new mongoose.Schema({
   name: String,
@@ -37,4 +39,12 @@ const addNewPerson = (personName,personNumber) =>{
 
 if(personName && personNumber){
     addNewPerson(personName, personNumber)
+}else if(password){
+  console.log(1111)
+  Person.find({}).then(result=> {
+    result.forEach(note=> {
+      console.log(note)
+    })
+    mongoose.connection.close()
+  })
 }
