@@ -46,17 +46,46 @@ app.delete("/api/persons/:id", (request, response, next) => {
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const id = request.params.id;
-  Person.findByIdAndUpdate(id)
-    .then((person) => {
-      console.log(person);
-      if (person) {
-        response.json(person);
-      } else {
-        response.status(204).end();
-      }
+  const id = request.params.id
+  const body = request.body
+ 
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(id, person, { new: true })
+    .then((updatedPerson) => {
+     
+      response.json(updatedPerson)
     })
-    .catch((error) => next(error));
+    .catch((error) => next(error))
+
+
+
+  // const id = request.params.id;
+  // const body = request.body
+  
+
+  // const person = {
+  //     name: body.name,
+  //     number: body.number
+  // }
+
+  // Person.findByIdAndUpdate(id, person, { new: true })
+  //     .then(updatedPerson => {
+  //       console.log(updatedPerson)
+  //         response.json(updatedPerson)
+  //     })
+  //     .catch(error => next(error))
+
+
+
+
+
+
+
+
 });
 
 app.post("/api/persons", (request, response, next) => {
