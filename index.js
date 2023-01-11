@@ -45,6 +45,20 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+  Person.findByIdAndUpdate(id)
+    .then((person) => {
+      console.log(person);
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(204).end();
+      }
+    })
+    .catch((error) => next(error));
+});
+
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
   console.log(body.name);
@@ -55,7 +69,6 @@ app.post("/api/persons", (request, response, next) => {
   const person = new Person({
     name: body.name,
     number: body.number,
-    // id: Math.floor(Math.random() * 100), //is this working?
   });
 
   person
