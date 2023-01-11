@@ -1,30 +1,12 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
 const app = express();
-
 app.use(express.json());
-
-// var morgan = require('morgan')
-// // app.use(morgan('tiny'))
-
-// morgan.token('body', function getBody (req) {
-//  //an object can not be logged to it must be turned into a string
-//   return JSON.stringify(req.body)
-// })
-
-// app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-
 const cors = require("cors");
-const Person = require('./models/person')
-
+const Person = require("./models/person");
 app.use(cors());
 app.use(express.static("build"));
 
-
-
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
 app.get("/info", (request, response) => {
   response.send(
     `<div>Phonebook has info for ${persons.length} people</div>
@@ -32,62 +14,57 @@ app.get("/info", (request, response) => {
   );
 });
 app.get("/api/persons", (request, response) => {
-  Person.find({}).then((persons) => {
-    
-    response.json(persons);
-  });
-});
-app.get("/api/persons/:id", (request, response) => {
-  const id = +request.params.id;
-
-  const person = persons.find((person) => {
-    // console.log(person.id, typeof person.id, id, typeof id, person.id === id);
-    return person.id === id;
-  });
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.find({})
+    .then((persons) => {
+      response.json(persons);
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
-  Person.findByIdAndDelete(id).then(()=>{
-   
-    response.status(204).end()
-  })
 
- 
+  Person.findById(id)
+    .then((person) => {
+      console.log(person);
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
+app.delete("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+  Person.findByIdAndDelete(id)
+    .then(() => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
+});
 
-
-// const generateId=()=>{
-// const maxId = persons.length > 0
-//     ? Math.max(...persons.map(person => person.id))
-//     : 0
-// }
-
-app.post("/api/persons", (request, response) => {
-  
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
-  console.log(body.name)
-  if(body === undefined){
-    return response.status(400).json({error: 'content missing'})
+  console.log(body.name);
+  if (body === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
   const person = new Person({
-      name: body.name,
-      number: body.number,
-      // id: Math.floor(Math.random() * 100), //is this working?
+    name: body.name,
+    number: body.number,
+    // id: Math.floor(Math.random() * 100), //is this working?
   });
 
-    person.save().then(savedPerson =>{
-      console.log(savedPerson)
-      response.json(savedPerson)
+  person
+    .save()
+    .then((savedPerson) => {
+      console.log(savedPerson);
+      response.json(savedPerson);
     })
+    .catch((error) => next(error));
 
   // console.log(body.name);
   // if (!body.name || !body.number) {
@@ -116,6 +93,19 @@ app.post("/api/persons", (request, response) => {
   // // console.log(person) ;
   // response.json(person);
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
