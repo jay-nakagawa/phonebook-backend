@@ -33,6 +33,7 @@ app.get("/info", (request, response) => {
 });
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
+    
     response.json(persons);
   });
 });
@@ -52,10 +53,16 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = +request.params.id;
-  persons = persons.filter((person) => person.id !== id);
-  response.status(204).end();
+  const id = request.params.id;
+  Person.findByIdAndDelete(id).then(()=>{
+   
+    response.status(204).end()
+  })
+
+ 
 });
+
+
 
 // const generateId=()=>{
 // const maxId = persons.length > 0
