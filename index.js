@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 
@@ -14,39 +15,12 @@ app.use(express.json());
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const cors = require("cors");
+const Person = require('./models/person')
 
 app.use(cors());
 app.use(express.static("build"));
 
-//////mongoose
-const mongoose = require("mongoose");
 
-if (process.argv.length < 3) {
-  console.log(
-    "Please provide the password as an argument: node mongo.js <password>"
-  );
-  process.exit(1);
-}
-
-const password = process.argv[2];
-console.log(password);
-const personName = process.argv[3];
-const personNumber = process.argv[4];
-
-const url = `mongodb+srv://jay:${password}@cluster0.rne2yt3.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
-
-mongoose.connect(url).then(() => {
-  console.log("connected");
-});
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-const Person = mongoose.model("Person", personSchema);
-
-//////////mongoose end
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
