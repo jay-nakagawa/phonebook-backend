@@ -8,10 +8,15 @@ app.use(cors());
 app.use(express.static("build"));
 
 app.get("/info", (request, response) => {
-  response.send(
-    `<div>Phonebook has info for ${persons.length} people</div>
-        <div>${new Date()}</div>`
-  );
+  Person.find({})
+  .then((person)=>{
+    
+    response.send(
+      `<div>Phonebook has info for ${person.length} people</div>
+          <div>${new Date()}</div>`
+    );
+  })
+ 
 });
 app.get("/api/persons", (request, response) => {
   Person.find({})
