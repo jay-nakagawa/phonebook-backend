@@ -64,33 +64,50 @@ app.delete("/api/persons/:id", (request, response) => {
 // }
 
 app.post("/api/persons", (request, response) => {
+  
   const body = request.body;
-  console.log(body.name);
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: "info missing",
-    });
+  console.log(body.name)
+  if(body === undefined){
+    return response.status(400).json({error: 'content missing'})
   }
 
-  //check persons array to see if there is any elements already using the name in the request body
-  const duplicateChecker = persons.find((person) => person.name === body.name);
-  //if there is a duplicate name then 404
-  if (duplicateChecker) {
-    return response.status(400).json({
-      error: "duplicate name",
-    });
-  }
+  const person = new Person({
+      name: body.name,
+      number: body.number,
+      // id: Math.floor(Math.random() * 100), //is this working?
+  });
 
-  const person = {
-    name: body.name,
-    number: body.number,
-    id: Math.floor(Math.random() * 100), //is this working?
-  };
+    person.save().then(savedPerson =>{
+      console.log(savedPerson)
+      response.json(savedPerson)
+    })
 
-  persons = persons.concat(person);
+  // console.log(body.name);
+  // if (!body.name || !body.number) {
+  //   return response.status(400).json({
+  //     error: "info missing",
+  //   });
+  // }
 
-  // console.log(person) ;
-  response.json(person);
+  // //check persons array to see if there is any elements already using the name in the request body
+  // const duplicateChecker = persons.find((person) => person.name === body.name);
+  // //if there is a duplicate name then 404
+  // if (duplicateChecker) {
+  //   return response.status(400).json({
+  //     error: "duplicate name",
+  //   });
+  // }
+
+  // const person = {
+  //   name: body.name,
+  //   number: body.number,
+  //   id: Math.floor(Math.random() * 100), //is this working?
+  // };
+
+  // persons = persons.concat(person);
+
+  // // console.log(person) ;
+  // response.json(person);
 });
 
 const PORT = process.env.PORT || 3001;
