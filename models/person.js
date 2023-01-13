@@ -33,6 +33,14 @@ mongoose.connect(url)
     },
     number: {
     type: String,
+    validate: {
+      validator: function(v) {
+        return /(\d{2}||\d{3})-\d{5,}/.test(v) && number.length>=8;
+        //update for NA phonenumbers
+      },
+      message: `Not a valid phone number. Please check format and number length!`
+    },
+    
     minLength: 8
     } 
   })
