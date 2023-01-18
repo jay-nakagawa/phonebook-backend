@@ -8,15 +8,12 @@ app.use(cors());
 app.use(express.static("build"));
 
 app.get("/info", (request, response) => {
-  Person.find({})
-  .then((person)=>{
-    
+  Person.find({}).then((person) => {
     response.send(
       `<div>Phonebook has info for ${person.length} people</div>
           <div>${new Date()}</div>`
     );
-  })
- 
+  });
 });
 app.get("/api/persons", (request, response) => {
   Person.find({})
@@ -51,26 +48,22 @@ app.delete("/api/persons/:id", (request, response, next) => {
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const id = request.params.id
-  const body = request.body
- 
+  const id = request.params.id;
+  const body = request.body;
+
   const person = {
     name: body.name,
     number: body.number,
-  }
+  };
 
   Person.findByIdAndUpdate(id, person, { new: true })
     .then((updatedPerson) => {
-      
-      response.json(updatedPerson)
+      response.json(updatedPerson);
     })
-    .catch((error) => next(error))
-
-
+    .catch((error) => next(error));
 
   // const id = request.params.id;
   // const body = request.body
-  
 
   // const person = {
   //     name: body.name,
@@ -83,14 +76,6 @@ app.put("/api/persons/:id", (request, response, next) => {
   //         response.json(updatedPerson)
   //     })
   //     .catch(error => next(error))
-
-
-
-
-
-
-
-
 });
 
 app.post("/api/persons", (request, response, next) => {
@@ -144,10 +129,10 @@ app.post("/api/persons", (request, response, next) => {
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
